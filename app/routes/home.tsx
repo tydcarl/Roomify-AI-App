@@ -1,6 +1,6 @@
 import Navbar from "components/Navbar";
 import type { Route } from "./+types/home";
-import { ArrowRight, ArrowUpRight, Clock, Layers } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Clock, Layers, Upload } from "lucide-react";
 import Button from "components/ui/Button";
 
 export function meta({}: Route.MetaArgs) {
@@ -47,7 +47,7 @@ export default function Home() {
               <h3>Upload your floor plan</h3>
               <p>Supports JPG, PNG formats up to 10MB</p>
             </div>
-            <p>Upload images</p>
+            <Upload />
           </div>
         </div>
       </section>
