@@ -79,12 +79,12 @@ export default function Home() {
                   <h3>Project Manhattan</h3>
                   <div className="meta">
                     <Clock size={12} />
-                    <span>{new Date('02.24.2027').toLocaleDateString}</span>
+                    <span>{new Date("2027-02-24").toLocaleDateString()}</span>
                     <span>By JSM</span>
                   </div>
                 </div>
                 <div className="arrow">
-                  <ArrowUpRight size={18}/>
+                  <ArrowUpRight size={18} />
                 </div>
               </div>
             </div>
