@@ -1,8 +1,8 @@
 import Navbar from "components/Navbar";
 import type { Route } from "./+types/home";
-import { ArrowRight, ArrowUpRight, Clock, Layers, Upload } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Clock, Layers } from "lucide-react";
 import Button from "components/ui/Button";
-
+import Upload from "components/Upload";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
