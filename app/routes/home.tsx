@@ -19,7 +19,7 @@ export default function Home() {
           <div className="dot">
             <div className="pulse"></div>
           </div>
-          <p>Introducing Rommify 2.0</p>
+          <p>Introducing Roomify 2.0</p>
         </div>
         <h1>Build beautiful spaces at the speed of thought with Roomify</h1>
 
@@ -47,7 +47,11 @@ export default function Home() {
               <h3>Upload your floor plan</h3>
               <p>Supports JPG, PNG formats up to 10MB</p>
             </div>
-            <Upload />
+            <Upload
+              onComplete={(base64Data) => {
+                console.log("Upload complete:", base64Data);
+              }}
+            />
           </div>
         </div>
       </section>
