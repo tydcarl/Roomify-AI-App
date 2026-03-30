@@ -1,23 +1,85 @@
 import { CheckCircle2, ImageIcon, UploadIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useOutletContext } from "react-router";
+import {
+  PROGRESS_INTERVAL_MS,
+  PROGRESS_STEP,
+  REDIRECT_DELAY_MS,
+} from "../lib/constants";
 
-const Upload = () => {
-  const [file, newFile] = useState<File | null>(null);
+interface UploadProps {
+  onComplete?: (base64Data: string) => void;
+}
+const Upload: React.FC<UploadProps> = ({ onComplete }) => {
+  const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const { isSignedIn } = useOutletContext<AuthContext>();
 
+  const processFile = (selectedFile: File) => {
+    if (!isSignedIn) return;
+
+    setFile(selectedFile);
+    setProgress(0);
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const base64 = reader.result as string;
+
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          const next = prev + PROGRESS_STEP;
+
+          if (next >= 100) {
+            clearInterval(interval);
+
+            setTimeout(() => {
+              console.log("DONE → send to API", base64);
+            }, REDIRECT_DELAY_MS);
+
+            return 100;
+          }
+
+          return next;
+        });
+      }, PROGRESS_INTERVAL_MS);
+    };
+
+    reader.readAsDataURL(selectedFile);
+  };
+
   return (
     <div className="upload">
       {!file ? (
-        <div className={`dropzone${isDragging ? " is-dragging" : ""}`}>
+        <div
+          className={`dropzone${isDragging ? " is-dragging" : ""}`}
+          onDragOver={(e) => {
+            e.preventDefault(); 
+            if (!isSignedIn) return;
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault(); 
+            if (!isSignedIn) return;
+
+            setIsDragging(false);
+
+            const droppedFile = e.dataTransfer.files?.[0];
+            if (droppedFile) processFile(droppedFile);
+          }}
+        >
           <input
             type="file"
             className="drop-input"
             accept=".jpg,.jpeg,.png"
             disabled={!isSignedIn}
+            onChange={(e) => {
+                const selectedFile = e.target.files?.[0];
+                if (selectedFile) processFile(selectedFile);
+            }}
           />
           <div className="drop-content">
             <div className="drop-icon">
