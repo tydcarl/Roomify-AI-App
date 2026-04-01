@@ -12,7 +12,7 @@ interface UploadProps {
 }
 const Upload: React.FC<UploadProps> = ({ onComplete }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);  
   const [progress, setProgress] = useState(0);
 
   const { isSignedIn } = useOutletContext<AuthContext>();
@@ -24,6 +24,11 @@ const Upload: React.FC<UploadProps> = ({ onComplete }) => {
     setProgress(0);
 
     const reader = new FileReader();
+
+    reader.onerror = () => {
+        setFile(null);
+        setProgress(0);
+    };
 
     reader.onload = () => {
       const base64 = reader.result as string;
@@ -68,8 +73,12 @@ const Upload: React.FC<UploadProps> = ({ onComplete }) => {
             setIsDragging(false);
 
             const droppedFile = e.dataTransfer.files?.[0];
-            if (droppedFile) processFile(droppedFile);
+            const allowedTypes = ["image/jpeg", "image/png"];
+            
+            if (droppedFile && allowedTypes.includes(droppedFile.type)) {
+                processFile(droppedFile);
           }}
+        }
         >
           <input
             type="file"
@@ -120,4 +129,4 @@ const Upload: React.FC<UploadProps> = ({ onComplete }) => {
   );
 };
 
-export default Upload;
+export default Upload
