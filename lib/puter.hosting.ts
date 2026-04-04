@@ -1,5 +1,4 @@
-import type { H } from "node_modules/react-router/dist/development/router-cLsU7kHk.mjs";
-import { createHostingSlug, HOSTING_CONFIG_KEY } from "./utils";
+import { createHostingSlug, HOSTING_CONFIG_KEY, isHostedUrl } from "./utils";
 import { puter } from "@heyputer/puter.js";
 
 type HostingConfig = { subdomain: string };
@@ -22,11 +21,18 @@ export const getOrCreateHostingConfig =
       const created = await puter.hosting.create(subdomain, ".");
 
       return { subdomain: created.subdomain };
-
     } catch (e) {
       console.warn(`Could not find subdomain: ${e}`);
       return null;
     }
   };
 
-  export const uploadAsset = async ({ hosting, url, projectID,}
+export const uploadImageToHosting = async ({
+  hosting,
+  url,
+  projectId,
+  label,
+}: StoreHostedImageParams): Promise<HostedAsset | null> => {
+  if (!hosting || !url) return null;
+  if (isHostedUrl(url)) return { url };
+};
