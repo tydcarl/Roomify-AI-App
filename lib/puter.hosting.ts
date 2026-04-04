@@ -22,8 +22,11 @@ export const getOrCreateHostingConfig =
       const created = await puter.hosting.create(subdomain, ".");
 
       return { subdomain: created.subdomain };
+
     } catch (e) {
       console.warn(`Could not find subdomain: ${e}`);
       return null;
     }
   };
+
+  export const uploadAsset = async ({ hosting, url, projectID,}
