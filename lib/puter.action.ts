@@ -58,4 +58,26 @@ export const createProject = async ({
     : item.renderedImage && isHostedUrl(item.renderedImage)
       ? item.renderedImage
       : undefined;
+
+  const {
+    sourcePath: _sourcePath,
+    renderedPath: _renderedPath,
+    publicPath: _publicPath,
+    ...rest
+  } = item;
+
+  const payload = {
+    ...rest,
+    sourceImage: resolvedSource,
+    renderedImage: resolvedRender,
+  };
+
+  try {
+    // Call the Puter worker to store project in kv
+
+    return payload;
+  } catch (e) {
+    console.log("Failed to save project", e);
+    return null;
+  }
 };
