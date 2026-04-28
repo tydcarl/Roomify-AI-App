@@ -1,5 +1,4 @@
 import puter from "@heyputer/puter.js";
-import { get } from "http";
 import {
   getOrCreateHostingConfig,
   uploadImageToHosting,
