@@ -1,19 +1,25 @@
-import React from "react";
-import { useLocation } from "react-router";
+import { useParams, useLocation } from "react-router";
 
 const VisualizerId = () => {
+  const { id } = useParams();
   const location = useLocation();
   const { initialImage, name } = location.state || {};
+
   return (
     <section>
-      <h1>{name || "Untitled Project"}</h1>
-
-      <div className="visulaizer">
-        {initialImage && (
-          <div className="image_container">
-            <h2>Source Image</h2>
-            <img src={initialImage} alt="source" />
+      <h1>{name || `Project ${id}`}</h1>
+      <div className="visualizer">
+        {" "}
+        {initialImage ? (
+          <div className="image-container">
+            <img
+              src={initialImage}
+              alt="Source"
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
           </div>
+        ) : (
+          <p>No image found. Try uploading again.</p>
         )}
       </div>
     </section>

@@ -33,16 +33,14 @@ export default function Home() {
     const saved = await createProject({ item: newItem, visibility: "private" });
 
     if (!saved) {
-      console.error("Failed to create project");
-      return false;
+      console.warn("Project didn't save to Puter, but we'll show it locally.");
     }
 
     setProjects((prev) => [newItem, ...prev]);
 
     navigate(`/visualizer/${newId}`, {
       state: {
-        initialImage: saved.sourceImage,
-        initialRendered: saved.renderedImage || null,
+        initialImage: base64Image,
         name,
       },
     });

@@ -12,7 +12,7 @@ interface UploadProps {
 }
 const Upload: React.FC<UploadProps> = ({ onComplete }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [isDragging, setIsDragging] = useState(false);  
+  const [isDragging, setIsDragging] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const { isSignedIn } = useOutletContext<AuthContext>();
@@ -26,8 +26,8 @@ const Upload: React.FC<UploadProps> = ({ onComplete }) => {
     const reader = new FileReader();
 
     reader.onerror = () => {
-        setFile(null);
-        setProgress(0);
+      setFile(null);
+      setProgress(0);
     };
 
     reader.onload = () => {
@@ -42,6 +42,10 @@ const Upload: React.FC<UploadProps> = ({ onComplete }) => {
 
             setTimeout(() => {
               console.log("DONE → send to API", base64);
+
+              if (onComplete) {
+                onComplete(base64);
+              }
             }, REDIRECT_DELAY_MS);
 
             return 100;
@@ -61,24 +65,24 @@ const Upload: React.FC<UploadProps> = ({ onComplete }) => {
         <div
           className={`dropzone${isDragging ? " is-dragging" : ""}`}
           onDragOver={(e) => {
-            e.preventDefault(); 
+            e.preventDefault();
             if (!isSignedIn) return;
             setIsDragging(true);
           }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={(e) => {
-            e.preventDefault(); 
+            e.preventDefault();
             if (!isSignedIn) return;
 
             setIsDragging(false);
 
             const droppedFile = e.dataTransfer.files?.[0];
             const allowedTypes = ["image/jpeg", "image/png"];
-            
+
             if (droppedFile && allowedTypes.includes(droppedFile.type)) {
-                processFile(droppedFile);
+              processFile(droppedFile);
+            }
           }}
-        }
         >
           <input
             type="file"
@@ -86,8 +90,8 @@ const Upload: React.FC<UploadProps> = ({ onComplete }) => {
             accept=".jpg,.jpeg,.png"
             disabled={!isSignedIn}
             onChange={(e) => {
-                const selectedFile = e.target.files?.[0];
-                if (selectedFile) processFile(selectedFile);
+              const selectedFile = e.target.files?.[0];
+              if (selectedFile) processFile(selectedFile);
             }}
           />
           <div className="drop-content">
@@ -129,4 +133,4 @@ const Upload: React.FC<UploadProps> = ({ onComplete }) => {
   );
 };
 
-export default Upload
+export default Upload;
