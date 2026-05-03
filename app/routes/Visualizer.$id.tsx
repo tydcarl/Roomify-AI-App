@@ -1,6 +1,6 @@
 import Button from "components/ui/Button";
 import { generate3Dview } from "lib/ai.action";
-import { Box, X, Download, Loader2, Share2 } from "lucide-react";
+import { Box, X, Download, Loader2, Share2, RefreshCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router";
 
@@ -85,39 +85,34 @@ const VisualizerId = () => {
               </Button>
             </div>
           </div>
+
           <div className={`render-area ${isProcessing ? "is-processing" : ""}`}>
-            {currentImage ? (
-              <img src={currentImage} alt="AI Render" className="render-img" />
-            ) : (
-              <div className="render-placeholder">
-                {initialImage && (
-                  <img
-                    src={initialImage}
-                    alt="Original"
-                    className="render-fallback"
-                  />
-                )}
+            {/* Primary Image Display */}
+            <div className="image-wrapper">
+              <img
+                src={currentImage || initialImage}
+                alt="Visualization"
+                className={currentImage ? "render-img" : "render-fallback"}
+              />
+            </div>
+
+            {isProcessing && (
+              <div className="render-overlay">
+                <div className="rendering-card">
+                  <RefreshCcw className="spinner" />
+                  <span className="title"> Rendering</span>
+                  <span className="subtitle"> Generating 3D View...</span>
+                </div>
               </div>
             )}
           </div>
 
           <div className="view-container">
-            {isProcessing ? (
-              <div className="loading-state">
-                <Loader2 className="w-8 h-8 animate-spin" />
-                <p>Generating your 3D view...</p>
-              </div>
-            ) : (
-              <div className="image-wrapper">
-                <img
-                  src={currentImage || initialImage}
-                  alt="Visualization"
-                  className="main-image"
-                />
-              </div>
+            {!currentImage && !isProcessing && (
+              <p className="help-text">Waiting for generation to complete...</p>
             )}
           </div>
-        </div>{" "}
+        </div>
       </section>
     </div>
   );
