@@ -4,7 +4,7 @@ import { ArrowRight, ArrowUpRight, Clock, Layers } from "lucide-react";
 import Button from "components/ui/Button";
 import Upload from "components/Upload";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createProject } from "lib/puter.action";
 
 export function meta({}: Route.MetaArgs) {
@@ -17,35 +17,47 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<DesignItem[]>([]);
+  const isCreatingProjectRef = useRef(false);
 
   const handleUploadComplete = async (base64Image: string) => {
-    const newId = Date.now().toString();
-    const name = `Residence ${newId}`;
+    try {
+      if (isCreatingProjectRef.current) return false;
+      isCreatingProjectRef.current = true;
+      const newId = Date.now().toString();
+      const name = `Residence ${newId}`;
 
-    const newItem = {
-      id: newId,
-      name,
-      sourceImage: base64Image,
-      renderedImage: undefined,
-      timestamp: Date.now(),
-    };
-
-    const saved = await createProject({ item: newItem, visibility: "private" });
-
-    if (!saved) {
-      console.warn("Project didn't save to Puter, but we'll show it locally.");
-    }
-
-    setProjects((prev) => [newItem, ...prev]);
-
-    navigate(`/visualizer/${newId}`, {
-      state: {
-        initialImage: base64Image,
+      const newItem = {
+        id: newId,
         name,
-      },
-    });
+        sourceImage: base64Image,
+        renderedImage: undefined,
+        timestamp: Date.now(),
+      };
 
-    return true;
+      const saved = await createProject({
+        item: newItem,
+        visibility: "private",
+      });
+
+      if (!saved) {
+        console.warn(
+          "Project didn't save to Puter, but we'll show it locally.",
+        );
+      }
+
+      setProjects((prev) => [newItem, ...prev]);
+
+      navigate(`/visualizer/${newId}`, {
+        state: {
+          initialImage: base64Image,
+          name,
+        },
+      });
+
+      return true;
+    } finally {
+      isCreatingProjectRef.current = false;
+    }
   };
 
   return (

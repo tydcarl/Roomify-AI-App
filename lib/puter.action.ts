@@ -4,6 +4,7 @@ import {
   uploadImageToHosting,
 } from "./puter.hosting";
 import { isHostedUrl } from "./utils";
+import { PUTER_WORKER_URL } from "./constants";
 
 export const signIn = async () => await puter.auth.signIn();
 
@@ -19,7 +20,12 @@ export const getCurrentUser = async () => {
 
 export const createProject = async ({
   item,
+  visibility = "private",
 }: CreateProjectParams): Promise<DesignItem | null | undefined> => {
+  if (!PUTER_WORKER_URL) {
+    console.warn("Puter worker URL not configured. Cannot save project;");
+    return null;
+  }
   const projectId = item.id;
 
   const hosting = await getOrCreateHostingConfig();
@@ -72,11 +78,50 @@ export const createProject = async ({
   };
 
   try {
-    // Call the Puter worker to store project in kv
+    const repsonse = await puter.workers.exec(
+      `${PUTER_WORKER_URL}/api/projects/save`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          body: JSON.stringify({
+            project: payload,
+            visibility,
+          }),
+        },
+      },
+    );
 
     return payload;
   } catch (e) {
     console.log("Failed to save project", e);
     return null;
+  }
+};
+
+export const getProjects = async () => {
+  if (!PUTER_WORKER_URL) {
+    console.warn("Puter worker URL not configured. Cannot fetch projects;");
+    return [];
+  }
+
+  try {
+    const repsonse = await puter.workers.exec(
+      `${PUTER_WORKER_URL}/api/projects/list`,
+      {
+        method: "GET",
+      },
+    );
+
+    if (!repsonse.ok) {
+      console.error("Failed to fetch projects", await repsonse.text());
+      return [];
+    }
+
+    const data = (await repsonse.json()) as { projects?: DesignItem[] | null };
+    return Array.isArray(data?.projects) ? data?.projects : [];
+  } catch (e) {
+    console.error("Failed to fetch projects", e);
+    return [];
   }
 };
