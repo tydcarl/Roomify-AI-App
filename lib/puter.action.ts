@@ -80,7 +80,9 @@ export const createProject = async ({
 
     const response = await fetch(`${baseUrl}/api/projects/save`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         project: payload,
         visibility,

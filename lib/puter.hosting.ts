@@ -7,7 +7,7 @@ import {
   imageUrlToPngBlob,
   isHostedUrl,
 } from "./utils";
-import { puter } from "@heyputer/puter.js";
+import puter from "@heyputer/puter.js";
 
 type HostingConfig = { subdomain: string };
 type HostedAsset = { url: string };
