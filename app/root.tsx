@@ -73,7 +73,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    refreshAuth;
+    refreshAuth();
   }, []);
 
   const signIn = async () => {
